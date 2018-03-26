@@ -1,0 +1,60 @@
+# multipart 配置
+multipart:
+  enabled: true
+  file-size-threshold: 0
+  location: /
+  max-file-size: 1Mb
+  max-request-size: 10Mb
+config:
+  quartz-file-name: quartz.properties
+spring:
+  profiles:
+    active: test
+  batch:
+    job:
+      enabled: false
+batch_table_chunk: 1000
+batch_stream_chunk: 1000
+batch_file_chunk: 1000
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*.xml
+  typeAliasesPackage: com.youedata.daas.rest.modular.model
+  global-config:
+    id-type: 0  #0:数据库ID自增   1:用户输入id  2:全局唯一id(IdWorker)  3:全局唯一ID(uuid)
+    db-column-underline: false
+    refresh-mapper: true
+  configuration:
+    map-underscore-to-camel-case: false
+    cache-enabled: true #配置的缓存的全局开关
+    lazyLoadingEnabled: true #延时加载的开关
+    multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+
+
+logging:
+  config: classpath:log4j2.xml
+
+daas-core:
+  du_create: http://192.168.0.64:22020/dataunit/create?uri=/
+  data_put: http://192.168.0.64:22020/dataunit/data/put?uri=/
+  data_info: http://192.168.0.64:22020/dataunit/info?uri=/
+  data_list: http://192.168.0.64:22020/datanode/list?uri=/ORP00017F00018S00001D00003
+  data_note_info: http://192.168.0.64:22020/datanode/info/
+  data_real: http://192.168.0.94:18003/api/v2/daas/monitor/service/real/write
+  db_name: daas_access
+  hdfs_node: hdfs
+  mysql_node: mysql
+  ip: 192.168.0.64
+  port: 22020
+  repeat: repeat
+daas-meta:
+  res_create: http://192.168.0.148:18002/api/v2/daas/meta/datasets
+  pro_create: http://192.168.0.148:18002/api/v2/daas/meta/datasets/pordlog/
+  label_get: http://192.168.0.148:18002/api/v2/daas/meta/datasets/label/
+  relation_put: http://192.168.0.148:18002/api/v2/daas/meta/datasets/relation/datasource/
+  kins_put: http://192.168.0.148:18002/api/v2/daas/meta/datasets/kins/
+  res_detail: http://192.168.0.148:18002/api/v2/daas/meta/datasets/
+  res_del: http://192.168.0.148:18002/api/v2/daas/meta/datasets?resId=
+
+SSOUrl: http://192.168.0.111:9090/yyzhzx/api/v1/session #单点登录中心的url

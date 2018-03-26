@@ -1,0 +1,27 @@
+server:
+  port: 18001 #项目端口
+#daas开关
+daas-switch:
+  swagger-open: true #swagger开关(true:打开, false:关闭)
+daas:
+  datasource_one:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.0.149:3306/daas?useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: youeDATA2016_
+  datasource_two:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.0.149/daas?useSSL=false&autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: youeDATA2016_
+
+redisConfig:
+  url: "redis://192.168.0.148:6379"
+  # 最大实例数
+  maxTotal: 100
+  # 最大空闲实例数
+  maxIdle: 10
+  # (创建实例时)最大等待时间
+  maxWaitMillis: 10000
+  # (创建实例时)是否验证
+  testOnBorrow: true

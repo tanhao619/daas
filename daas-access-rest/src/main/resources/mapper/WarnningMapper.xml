@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youedata.daas.rest.modular.dao.WarnningMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.youedata.daas.rest.modular.model.WarnningPo">
+		<id column="id" property="id" />
+		<result column="taskId" property="taskId" />
+		<result column="taskName" property="taskName" />
+		<result column="warnningType" property="warnningType" />
+		<result column="acoType" property="acoType" />
+		<result column="upCycle" property="upCycle" />
+		<result column="upNum" property="upNum" />
+		<result column="upHour" property="upHour" />
+		<result column="createTime" property="createTime" />
+	</resultMap>
+
+	<select id="selectWarnningList" resultType="com.youedata.daas.rest.modular.model.WarnningPo" >
+		select *
+		from daas_access_warnning
+		where 1 = 1
+		<if test="params !=null">
+			<foreach collection="params.keys" item="key" open="" close="" separator="" >
+				AND ${key} = #{params[${key}]}
+			</foreach>
+		</if>
+		<if test="searchvalue != null">
+			AND taskName like "%${searchvalue}%"
+		</if>
+		<if test="order == 0">
+			ORDER BY createTime ASC
+		</if>
+		<if test="order == 1">
+			ORDER BY createTime DESC
+		</if>
+	</select>
+
+	<select id="getOvertimeCounts" resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM daas_access_warnning WHERE warnningType = 5
+	</select>
+	<select id="getAtypicalCounts" resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM daas_access_warnning WHERE warnningType = 1
+	</select>
+	<select id="getOutsideCounts" resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM daas_access_warnning WHERE warnningType = 2
+	</select>
+	<select id="getRepeatFilesCounts" resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM daas_access_warnning WHERE warnningType = 3
+	</select>
+	<select id="getErrorstopCounts" resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM daas_access_warnning WHERE warnningType = 4
+	</select>
+
+	<!-- 导出列表 -->
+	<select id="selectExportWarnningList" resultType="com.youedata.daas.rest.modular.model.WarnningPo" >
+		select taskId,taskName,dsType,warnningType,medium,createTime
+		from daas_access_warnning
+		where 1 = 1
+		<if test="params !=null">
+			<foreach collection="params.keys" item="key" open="" close="" separator="" >
+				AND ${key} = #{params[${key}]}
+			</foreach>
+		</if>
+		<if test="searchvalue != null">
+			AND taskName like "%${searchvalue}%"
+		</if>
+		<if test="ids != null">
+			AND find_in_set(id,#{ids})
+		</if>
+	</select>
+
+	<select id="getTaskStatus" resultType="Integer">
+		SELECT taskStatus FROM daas_access_task WHERE id = #{id}
+	</select>
+
+	<select id="getTaskType" resultType="Integer">
+		SELECT taskType FROM daas_access_task WHERE id = #{id}
+	</select>
+</mapper>

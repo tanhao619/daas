@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youedata.daas.rest.modular.dao.TaskMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="com.youedata.daas.rest.modular.model.TaskPo">
+		<id column="id" property="id" />
+		<id column="taskCode" property="taskCode" />
+		<id column="taskTitle" property="taskTitle" />
+		<id column="mediumInfo" property="mediumInfo" javaType="com.alibaba.fastjson.JSONObject" typeHandler="com.youedata.daas.rest.common.ReturnJsonTypeHandler" />
+		<id column="taskType" property="taskType" />
+		<id column="threshold" property="threshold" />
+		<id column="taskStatus" property="taskStatus" />
+		<id column="creater" property="creater" />
+		<id column="startTime" property="startTime" />
+		<id column="endTime" property="endTime" />
+		<id column="createTime" property="createTime" />
+		<id column="updateTime" property="updateTime" />
+		<id column="min" property="min" />
+		<id column="max" property="max" />
+		<id column="cycle" property="cycle" />
+		<id column="unit" property="unit" />
+		<id column="dsId" property="dsId" />
+		<id column="dsType" property="dsType" />
+		<id column="rule" property="rule" javaType="com.alibaba.fastjson.JSONObject" typeHandler="com.youedata.daas.rest.common.ReturnArrayTypeHandler" />
+		<id column="exeTime" property="exeTime" />
+		<id column="resIds" property="resIds" />
+	</resultMap>
+	<!-- 分页列表返回 -->
+	<resultMap id="PageListResultMap" type="com.youedata.daas.rest.modular.model.vo.TaskListVo">
+		<id column="id" property="id" />
+		<id column="taskTitle" property="taskTitle" />
+		<id column="dsType" property="dsType" />
+		<id column="mediumInfo" property="mediumInfo" typeHandler="com.youedata.daas.rest.common.ReturnJsonTypeHandler" />
+		<id column="createTime" property="createTime" />
+		<id column="creater" property="creater" />
+		<id column="taskType" property="taskType" />
+		<id column="taskStatus" property="taskStatus" />
+	</resultMap>
+	<select id="listPage" resultMap="PageListResultMap" >
+		SELECT
+		task.id,
+		task.taskTitle,
+		task.dsType,
+		task.mediumInfo,
+		DATE_FORMAT(task.createTime,'%Y-%m-%d %H:%i:%s') as createTime,
+		task.creater,
+		task.taskType,
+		task.taskStatus
+		from daas_access_task task
+		where 1 = 1
+		<if test="params !=null">
+			<foreach collection="params.keys" item="key" open="" close="" separator="" >
+				AND task.${key} = #{params[${key}]}
+			</foreach>
+		</if>
+		<if test="searchvalue != null">
+			AND task.taskTitle like "%${searchvalue}%"
+		</if>
+		ORDER BY task.createTime DESC
+	</select>
+
+	<update id="updateEntity" parameterType="com.youedata.daas.rest.modular.model.TaskPo">
+		UPDATE daas_access_task
+		<trim prefix="set" suffixOverrides=",">
+		<if test="id != null">
+			id=#{id},
+		</if>
+		<if test="taskCode != null">
+			taskCode=#{taskCode},
+		</if>
+		<if test="taskTitle != null">
+			taskTitle=#{taskTitle},
+		</if>
+		<if test="dsId != null">
+			dsId=#{dsId},
+		</if>
+		<if test="mediumInfo != null">
+			mediumInfo=#{mediumInfo ,typeHandler=com.youedata.daas.rest.common.JsonTypeHandler},
+		</if>
+		<if test="taskType != null">
+			taskType=#{taskType},
+		</if>
+		<if test="threshold != null">
+			threshold=#{threshold},
+		</if>
+		<if test="creater != null">
+			creater=#{creater},
+		</if>
+		<if test="updateTime != null">
+			updateTime=#{updateTime},
+		</if>
+		<if test="min != null">
+			`min`=#{min},
+		</if>
+		<if test="max != null">
+			`max`=#{max},
+		</if>
+		<if test="unit != null">
+			unit=#{unit},
+		</if>
+		<if test="rule != null">
+			`rule`=#{rule,typeHandler=com.youedata.daas.rest.common.JsonTypeHandler},
+		</if>
+		<if test="createTime != null">
+			createTime=#{createTime},
+		</if>
+		<if test="updateTime != null">
+			updateTime=#{updateTime},
+		</if>
+		<if test="startTime != null">
+			startTime=#{startTime},
+		</if>
+		<if test="endTime != null">
+			endTime=#{endTime},
+		</if>
+		<if test="exeTime != null">
+			exeTime=#{exeTime},
+		</if>
+		<if test="dsType != null">
+			dsType=#{dsType},
+		</if>
+		<if test="resIds != null">
+			resIds=#{resIds},
+		</if>
+		<if test="taskStatus != null">
+			taskStatus=#{taskStatus},
+		</if>
+		<if test="cycle != null">
+			cycle=#{cycle},
+		</if>
+		<if test="hasHeader != null">
+			hasHeader=#{hasHeader},
+		</if>
+		<if test="separative != null">
+			separative=#{separative},
+		</if>
+		<if test="fileType != null">
+			fileType=#{fileType},
+		</if>
+		<if test="filePath != null">
+			filePath=#{filePath}
+		</if>
+		</trim>
+		WHERE id=#{id}
+	</update>
+	<select id="getDetail" resultMap="BaseResultMap">
+		SELECT id, taskCode,taskTitle,dsId,mediumInfo,taskType,threshold,creater,updateTime,startTime,endTime,
+			min,max,unit,rule,createTime,exeTime,dsType,resIds,taskStatus,cycle,hasHeader,separative,fileType,filePath
+		FROM daas_access_task
+		WHERE id = #{id}
+	</select>
+	<insert id="insertEntity" parameterType="com.youedata.daas.rest.modular.model.TaskPo" >
+		<selectKey keyProperty="id" resultType="int" order="AFTER">
+			select LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO daas_access_task(taskCode, taskTitle, dsId, mediumInfo, taskType, threshold, taskStatus, creater, startTime,
+									 endTime, createTime, updateTime, min, max, cycle, unit, rule, dsType,exeTime,resIds,hasHeader,separative,fileType,filePath)
+				VALUES (#{taskCode}, #{taskTitle}, #{dsId}, #{mediumInfo, typeHandler=com.youedata.daas.rest.common.JsonTypeHandler}, #{taskType}, #{threshold}, #{taskStatus}, #{creater}, #{startTime},
+									 #{endTime}, #{createTime}, #{updateTime}, #{min}, #{max}, #{cycle}, #{unit},
+		#{rule,typeHandler=com.youedata.daas.rest.common.JsonTypeHandler}, #{dsType},#{exeTime},#{resIds},#{hasHeader},#{separative},#{fileType},#{filePath})
+	</insert>
+
+	<select id="getStatusCount" resultType="map">
+			SELECT  COUNT(id) as count,taskStatus
+	FROM daas_access_task
+	GROUP BY taskStatus
+	</select>
+
+	<select id="getAllCreateTime" resultType="com.youedata.daas.rest.modular.model.dto.TaskTimeDto">
+		SELECT createTime FROM daas_access_task
+		WHERE DATE(createTime) BETWEEN DATE_SUB(CURDATE(), INTERVAL 29 DAY) AND DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+	</select>
+	<select id="getTaskDates" resultType="com.youedata.daas.rest.modular.model.dto.TaskTimeDto">
+		SELECT DISTINCT allDe.date as createTime FROM(
+		select adddate((select DATE(date_sub(now(),interval 29 day))), numlist.id)  as 'date' from
+		(SELECT n1.i + n10.i*10 + n100.i*100 AS id FROM daas_access_num n1 cross join daas_access_num as n10 cross join
+		daas_access_num as n100) as numlist where <![CDATA[ adddate((select DATE(date_sub(now(),interval 29 day))), numlist.id) <= CURDATE()]]>
+		) allDe
+		where allDe.date not in (
+		SELECT DISTINCT DATE(createTime) as createTime FROM daas_access_task WHERE createTime BETWEEN DATE_SUB(CURDATE(), INTERVAL 29 DAY) AND DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+		)
+	</select>
+
+	<select id="getNearDates" resultType="String">
+		select adddate((select DATE(date_sub(now(),interval 29 day))), numlist.id)  as 'createTime' from
+		(SELECT n1.i + n10.i*10 + n100.i*100 AS id FROM daas_access_num n1 cross join daas_access_num as n10 cross join
+		daas_access_num as n100) as numlist where <![CDATA[ adddate((select DATE(date_sub(now(),interval 29 day))), numlist.id) <= CURDATE()]]>
+	</select>
+
+	<select id="getCount" resultType="Integer">
+		SELECT count(id) FROM daas_access_task WHERE 1 = 1
+		<if test="status != null and status != '' and status != 0">
+			and taskStatus = #{status}
+		</if>
+		<if test="time != null and time != ''">
+			<![CDATA[
+          and DATE_FORMAT(exeTime, '%Y-%m-%d') =  DATE_FORMAT(#{time}, '%Y-%m-%d')
+          ]]>
+		</if>
+	</select>
+
+	<select id="getPilCount" resultType="com.youedata.daas.rest.modular.model.dto.TaskTimeDto">
+		SELECT
+		COUNT(id) count,
+		DATE_FORMAT( exeTime, '%Y-%m-%d' ) startTime,
+		taskStatus
+		FROM daas_access_task
+		WHERE exeTime BETWEEN DATE_SUB(CURDATE(), INTERVAL 29 DAY)
+		AND DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+		GROUP BY DATE_FORMAT( exeTime, '%Y-%m-%d' ),taskStatus
+	</select>
+
+	<select id="getExecAvgNum" resultType="Double">
+		SELECT
+		COUNT( id ) / ( ( UNIX_TIMESTAMP(#{date} ) - UNIX_TIMESTAMP( DATE_FORMAT( MIN( startTime ), '%Y-%m-%d' ) ) ) / 3600 / 24 ) AS averageNum
+		FROM
+		daas_access_task
+		WHERE
+		<![CDATA[ startTime < #{date} ]]>
+	</select>
+	
+	<select id="getArrTime" resultType="com.youedata.daas.rest.modular.model.dto.TaskTimeDto">
+		SELECT SUM( UNIX_TIMESTAMP( endTime ) - UNIX_TIMESTAMP( exeTime ) ) / COUNT( DATE_FORMAT( exeTime, '%Y-%m-%d' ) ) AS avrageTime,
+		DATE_FORMAT( exeTime, '%Y-%m-%d' ) AS startTime
+	FROM
+		daas_access_task
+	WHERE
+		taskStatus != 1
+		AND exeTime BETWEEN DATE_SUB( CURDATE( ), INTERVAL 29 DAY )
+		AND DATE_SUB( CURDATE( ), INTERVAL 0 DAY )
+		AND endTime IS NOT NULL
+		<![CDATA[
+		AND endTime > exeTime
+		]]>
+	GROUP BY
+		DATE_FORMAT( exeTime, '%Y-%m-%d' )
+	</select>
+
+	<select id="getTotalExceptionNum" resultType="Integer">
+		SELECT count(id) FROM daas_access_task WHERE
+		DATE(exeTime) BETWEEN DATE_SUB(CURDATE(), INTERVAL 29 DAY) AND DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+		<if test="time != null and time != ''">
+			<![CDATA[
+          and DATE_FORMAT(exeTime, '%Y-%m-%d') <=  DATE_FORMAT(#{time}, '%Y-%m-%d')
+          ]]>
+		</if>
+	</select>
+
+	<select id="getDetailInfo" resultType="com.youedata.daas.rest.modular.model.dto.HistoryDetailDto">
+		SELECT dp.id,dp.resId,dp.flowrate,dp.records,dp.totalSize,dp.startTime,dp.endTime,cast(json_extract ( ds.resType, '$.type' ) as signed) as type
+		FROM daas_production_info dp,daas_meta_recordset ds WHERE dp.resId=ds.id and dp.taskId=#{taskId}
+		<if test="startTime != null and startTime != ''">
+			<![CDATA[
+          and DATE_FORMAT(startTime, '%Y-%m-%d') >=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+          ]]>
+		</if>
+		<if test="endTime != null and endTime != ''">
+			<![CDATA[
+          and DATE_FORMAT(endTime, '%Y-%m-%d') <=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
+          ]]>
+		</if>
+		ORDER BY startTime
+	</select>
+
+	<select id="getHistory" resultType="com.youedata.daas.rest.modular.model.dto.HistoryDetailDto">
+		SELECT AVG(flowrate) flowrate,SUM(records) records,SUM(totalSize) totalSize,DATE_FORMAT(startTime, '%Y-%m-%d %H:%i') time,startTime,max(endTime) endTime FROM daas_production_info WHERE taskId=#{taskId}
+		<if test="startTime != null and startTime != ''">
+			<![CDATA[
+          and DATE_FORMAT(startTime, '%Y-%m-%d') >=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')
+          ]]>
+		</if>
+		<if test="endTime != null and endTime != ''">
+			<![CDATA[
+          and DATE_FORMAT(endTime, '%Y-%m-%d') <=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')
+          ]]>
+		</if>
+		GROUP BY startTime ORDER BY startTime
+	</select>
+
+	<select id="getDataAccess" resultType="com.youedata.daas.rest.modular.model.dto.DataAccessDto">
+		SELECT SUM(a.totalSize) AS yAxis, DATE(a.startTime) AS xAxis FROM daas_production_info a
+		WHERE DATE(startTime) BETWEEN DATE_SUB(CURDATE(), INTERVAL 29 DAY) AND DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+		GROUP BY xAxis
+	</select>
+
+	<select id="getDataAccessTotal" resultType="Long">
+		SELECT SUM(totalSize) from daas_production_info WHERE <![CDATA[ DATE_FORMAT(startTime, '%Y-%m-%d') <= DATE_FORMAT(now(),'%Y-%m-%d')]]>
+	</select>
+
+    <select id="getArvData" resultType="Double">
+		SELECT (SELECT SUM(totalSize) from daas_production_info WHERE  DATE_FORMAT(startTime, '%Y-%m-%d')
+		<![CDATA[ <= DATE_FORMAT(now(),'%Y-%m-%d')]]>) / (
+		select TIMESTAMPDIFF(DAY,(SELECT  min( startTime ) FROM daas_production_info),now())
+		) as sum
+    </select>
+
+	<select id="getDayInfo" resultType="com.youedata.daas.rest.modular.model.dto.DataListDto">
+			SELECT
+		prod.length,
+		prod.space,
+		prod.startTime,
+	CASE
+		WHEN prod.type = '1' THEN
+		'TABLE'
+		WHEN prod.type = '2' THEN
+		'FILE'
+		WHEN prod.type = '3' THEN
+		'STREAM'
+		END AS TYPE
+	FROM
+		(
+		SELECT
+			SUM( dpi.records ) AS LENGTH,
+			SUM( dpi.totalSize ) AS SPACE,
+			DATE_FORMAT( dpi.startTime, '%Y-%m-%d' ) AS startTime,
+			json_extract ( dmr.resType, '$.type' ) AS TYPE
+		FROM
+			daas_production_info dpi,
+			daas_meta_recordset dmr
+		WHERE
+			dpi.resId = dmr.id
+			AND dpi.startTime BETWEEN DATE_SUB( CURDATE( ), INTERVAL 29 DAY )
+			AND DATE_SUB( CURDATE( ), INTERVAL 0 DAY )
+		GROUP BY
+			TYPE,
+		DATE_FORMAT( dpi.startTime, '%Y-%m-%d' )
+	) prod
+	</select>
+
+	<select id="getEffectInfo" resultType="com.youedata.daas.rest.modular.model.dto.DataListDto">
+				SELECT
+		SUM( totalSize ) AS space,
+		DATE( startTime ) AS startTime
+	FROM
+		daas_production_info
+	WHERE
+		startTime BETWEEN DATE_SUB( CURDATE( ), INTERVAL 29 DAY )
+		AND DATE_SUB( CURDATE( ), INTERVAL - 1 DAY )
+	GROUP BY
+		DATE( startTime )
+	</select>
+
+	<select id="getDayArr" resultType="String">
+		SELECT
+		SUM( totalSize ) / ( ( UNIX_TIMESTAMP(#{time}) - UNIX_TIMESTAMP( DATE_FORMAT( MIN( startTime ), '%Y-%m-%d' ) ) ) / 3600 / 24 ) AS space
+		FROM
+		daas_production_info
+		WHERE
+		<![CDATA[
+		startTime < #{time}
+		]]>
+	</select>
+
+	<select id="getType" resultType="String">
+		SELECT resType FROM daas_meta_recordset WHERE id = #{resId}
+	</select>
+
+	<select id="getDates" resultType="com.youedata.daas.rest.modular.model.dto.DataListDto">
+		SELECT DISTINCT allDe.date as startTime FROM(
+		select adddate((select DATE(date_sub(now(),interval 29 day))), numlist.id)  as 'date' from
+		(SELECT n1.i + n10.i*10 + n100.i*100 AS id FROM daas_access_num n1 cross join daas_access_num as n10 cross join
+		daas_access_num as n100) as numlist where <![CDATA[ adddate((select DATE(date_sub(now(),interval 29 day))), numlist.id) <= CURDATE()]]>
+		) allDe
+		where allDe.date not in (
+		SELECT DISTINCT DATE(startTime) as startTime FROM daas_production_info WHERE DATE(startTime) BETWEEN DATE_SUB(CURDATE(), INTERVAL 29 DAY) AND DATE_SUB(CURDATE(), INTERVAL 0 DAY)
+		)
+	</select>
+
+	<!-- 验证是否存在相同数据源和数据集的任务 -->
+	<select id="verifyTask" resultType="java.lang.Integer">
+		SELECT count(id)
+		FROM daas_access_task
+		WHERE 1 = 1
+			AND
+			resIds = #{resIds}
+			AND
+			dsId = #{dsId}
+	</select>
+</mapper>

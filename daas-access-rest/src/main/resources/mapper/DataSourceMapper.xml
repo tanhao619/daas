@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youedata.daas.rest.modular.dao.DataSourceMapper">
+
+	<!-- 通用查询映射结果 -->
+
+	<select id="getSourcePageList" resultType="com.youedata.daas.rest.modular.model.DataSourcePo" >
+		select *
+		from daas_access_data_source
+		where 1 = 1
+		<if test="params !=null">
+			<foreach collection="params.keys" item="key" open="" close="" separator="" >
+				AND ${key} = #{params[${key}]}
+			</foreach>
+		</if>
+		<if test="searchvalue != null">
+			AND dsTitle like "%${searchvalue}%"
+		</if>
+		ORDER BY createTime DESC
+	</select>
+
+	<select id="getSourceAllList" resultType="com.youedata.daas.rest.modular.model.DataSourcePo" >
+		select *
+		from daas_access_data_source
+		where 1 = 1
+		<if test="params !=null">
+			<foreach collection="params.keys" item="key" open="" close="" separator="" >
+				AND ${key} = #{params[${key}]}
+			</foreach>
+		</if>
+		<if test="searchvalue != null">
+			AND dsTitle like "%${searchvalue}%"
+		</if>
+		ORDER BY createTime DESC
+	</select>
+
+	<select id="getRelateTaskNum" resultType="Integer">
+		SELECT COUNT(id) FROM daas_access_task WHERE dsId = #{dsId}
+	</select>
+
+	<select id="getByTitle" resultType="com.youedata.daas.rest.modular.model.DataSourcePo">
+		SELECT * FROM daas_access_data_source WHERE dsTitle = #{dsTitle}
+	</select>
+
+	<select id="getDsTypeCount" resultType="map">
+		SELECT dsType,count(id) AS total FROM daas_access_data_source GROUP BY dsType
+	</select>
+</mapper>
